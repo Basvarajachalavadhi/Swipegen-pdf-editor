@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwipeGen PDF Editor</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>📄 SwipeGen PDF Editor</h1>
+            <p>Edit PDFs while preserving original layout</p>
+        </header>
+
+        <!-- Upload Section -->
+        <div class="upload-section" id="uploadSection">
+            <div class="upload-card">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📁</div>
+                    <h3>Upload Your PDF</h3>
+                    <p>Drag & drop or click to select PDF file</p>
+                    <input type="file" id="fileInput" accept=".pdf" hidden>
+                    <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
+                        Choose PDF File
+                    </button>
+                    <div class="file-info" id="fileInfo"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Editor Section -->
+        <div class="editor-section" id="editorSection" style="display: none;">
+            <div class="editor-header">
+                <div class="file-display">
+                    <h3 id="fileName">Editing: document.pdf</h3>
+                    <div class="file-actions">
+                        <button class="btn btn-secondary" id="saveBtn">💾 Save</button>
+                        <button class="btn btn-secondary" id="downloadBtn">📥 Download</button>
+                        <button class="btn btn-secondary" id="newBtn">🆕 New</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="editor-container">
+                <!-- PDF Viewer -->
+                <div class="pdf-viewer">
+                    <div class="viewer-controls">
+                        <div class="zoom-controls">
+                            <button class="btn-icon" id="zoomOut">🔍−</button>
+                            <span class="zoom-level" id="zoomLevel">100%</span>
+                            <button class="btn-icon" id="zoomIn">🔍+</button>
+                        </div>
+                        <div class="page-controls">
+                            <button class="btn-icon" id="prevPage">◀</button>
+                            <span class="page-info" id="pageInfo">Page 1/1</span>
+                            <button class="btn-icon" id="nextPage">▶</button>
+                        </div>
+                    </div>
+                    <div class="pdf-container" id="pdfContainer">
+                        <canvas id="pdfCanvas"></canvas>
+                        <div class="text-layer" id="textLayer"></div>
+                    </div>
+                </div>
+
+                <!-- Editor Panel -->
+                <div class="editor-panel">
+                    <div class="panel-section">
+                        <h4>✏️ Text Editor</h4>
+                        <div class="form-group">
+                            <label>Selected Text:</label>
+                            <textarea id="textInput" placeholder="Select text on PDF to edit..." rows="4"></textarea>
+                        </div>
+                        <button class="btn btn-primary" id="applyText" disabled>Apply Changes</button>
+                    </div>
+
+                    <div class="panel-section">
+                        <h4>🎨 Text Styling</h4>
+                        <div class="style-controls">
+                            <div class="control-group">
+                                <label>Font Size:</label>
+                                <input type="range" id="fontSize" min="8" max="72" value="12">
+                                <span id="fontSizeValue">12px</span>
+                            </div>
+                            <div class="control-group">
+                                <label>Text Color:</label>
+                                <input type="color" id="textColor" value="#000000">
+                            </div>
+                            <div class="control-group">
+                                <label>Font Family:</label>
+                                <select id="fontFamily">
+                                    <option value="Arial">Arial</option>
+                                    <option value="Helvetica">Helvetica</option>
+                                    <option value="Times New Roman">Times New Roman</option>
+                                    <option value="Courier New">Courier New</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-section">
+                        <h4>📝 Edit History</h4>
+                        <div class="history-list" id="historyList">
+                            <div class="empty-history">No edits yet</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Messages -->
+        <div class="status-toast" id="statusToast"></div>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="spinner"></div>
+            <p>Processing PDF...</p>
+        </div>
+    </div>
+
+    <!-- Debug Info (remove in production) -->
+    <div style="position: fixed; bottom: 10px; left: 10px; background: rgba(0,0,0,0.8); color: white; padding: 10px; border-radius: 5px; font-size: 12px; z-index: 1000;">
+        <div>Backend: <span id="backendStatus">Checking...</span></div>
+        <div>PDF: <span id="pdfStatus">None</span></div>
+        <div>Pages: <span id="pagesStatus">0</span></div>
+    </div>
+
+    <script src="js/pdfViewer.js"></script>
+    <script src="js/textEditor.js"></script>
+    <script src="js/app.js"></script>
+
+    <script>
+    // Debug script
+    setInterval(() => {
+        const app = window.pdfEditor;
+        if (app) {
+            document.getElementById('backendStatus').textContent = app.backendURL;
+            document.getElementById('pdfStatus').textContent = app.currentPDF ? app.currentPDF.originalname : 'None';
+            document.getElementById('pagesStatus').textContent = app.totalPages;
+        }
+    }, 1000);
+    </script>
+</body>
+</html>
